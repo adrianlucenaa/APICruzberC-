@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("APICruzber")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ae6d2d2872e3f0156a68ff240103b7ecb950a75c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9dd5087e8a8b8d116bff726d0d1feb4244edd4bd")]
 [assembly: System.Reflection.AssemblyProductAttribute("APICruzber")]
 [assembly: System.Reflection.AssemblyTitleAttribute("APICruzber")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

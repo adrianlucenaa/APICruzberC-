@@ -1,8 +1,64 @@
 ﻿
 using APICruzber.Datos;
+using APICruzber.Interfaces;
 using APICruzber.Modelo;
 using Microsoft.AspNetCore.Mvc;
 
+namespace APICruzber.Controllers
+{
+    [ApiController]
+    [Route("api/clientes")]
+    public class ClienteController : ControllerBase
+    {
+        private readonly ICliente _icliente; // Declara una instancia de IClienteService
+
+        // Modifica el constructor para recibir IClienteService
+        public ClienteController(ICliente icliente)
+        {
+            _icliente = icliente;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<ClienteModelo>>> Get()
+        {
+            var lista = await _icliente.MostrarClientes(); // Utiliza _clienteService en lugar de crear una instancia de DatosCliente
+            return lista;
+        }
+
+        [HttpPost]
+        public async Task Post([FromBody] ClienteModelo parametros)
+        {
+            await _icliente.InsertarCliente(parametros); // Utiliza _clienteService en lugar de crear una instancia de DatosCliente
+        }
+
+        [HttpPut("{CodigoCliente}")]
+        public async Task<ActionResult> Put(string CodigoCliente, [FromBody] ClienteModelo parametros)
+        {
+            parametros.CodigoCliente = CodigoCliente;
+            await _icliente.ActualizarCliente(parametros); // Utiliza _clienteService en lugar de crear una instancia de DatosCliente
+            return NoContent();
+        }
+
+        [HttpDelete("{CodigoCliente}")]
+        public async Task<ActionResult> Delete(string CodigoCliente)
+        {
+            await _icliente.EliminarCliente(CodigoCliente); // Utiliza _clienteService en lugar de crear una instancia de DatosCliente
+            return NoContent();
+        }
+
+        [HttpGet("{codigoCliente}")]
+        public async Task<ActionResult<List<ClienteModelo>>> Get(string codigoCliente)
+        {
+            var lista = await _icliente.MostrarClientesPorCodigo(codigoCliente); // Utiliza _clienteService en lugar de crear una instancia de DatosCliente
+            if (lista == null || lista.Count() == 0)
+            {
+                return NotFound();
+            }
+            return lista;
+        }
+    }
+}
+/*
 namespace APICruzber.Controllers
 {
     [ApiController]
@@ -58,3 +114,4 @@ namespace APICruzber.Controllers
 
     }
 }
+*/
