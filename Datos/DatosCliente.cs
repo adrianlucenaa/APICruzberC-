@@ -1,4 +1,5 @@
 ﻿using APICruzber.Connection;
+using APICruzber.Interfaces;
 using APICruzber.Modelo;
 using System.Collections.Generic;
 using System.Data;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace APICruzber.Datos
 {
-    public class DatosCliente
+    public class DatosCliente : ICliente
     {
         ConnectionBD cnxdb = new ConnectionBD();
 
@@ -72,20 +73,20 @@ namespace APICruzber.Datos
         }
 
         // Método para eliminar un cliente
-        public async Task EliminarCliente(ClienteModelo parametros)
+        public async Task EliminarCliente(string CodigoCliente)
         {
-            using (var sql = new SqlConnection(cnxdb.cadenaSQL()))
+            using (var sql = new SqlConnection(cnxdb.cadenaSQL())) 
             {
                 using (var cmd = new SqlCommand("SP_EliminarClientes", sql))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure; 
-                                                                                                // Añade los parámetros necesarios para la eliminación del cliente
-                    cmd.Parameters.AddWithValue("@CodigoCliente", parametros.CodigoCliente);
-                    await sql.OpenAsync();                                                      
-                    await cmd.ExecuteNonQueryAsync();                                           // Ejecuta el comando de eliminación en la base de datos
+                    cmd.CommandType = CommandType.StoredProcedure;                                 // Añade los parámetros, que en este caso seria solo el codigo cliente, necesarios para la eliminación del cliente
+                    cmd.Parameters.AddWithValue("@CodigoCliente", CodigoCliente);
+                    await sql.OpenAsync();                                                         // Ejecuta el comando de eliminación en la base de datos
+                    await cmd.ExecuteNonQueryAsync();
                 }
             }
         }
+        
 
         // Método para mostrar clientes filtrados por código
         public async Task<List<ClienteModelo>> MostrarClientesPorCodigo(string codigoCliente)
@@ -114,6 +115,5 @@ namespace APICruzber.Datos
             }
             return lista;                                                                                                   // Devuelve la lista de clientes filtrados por código
         }
-
     }
 }
