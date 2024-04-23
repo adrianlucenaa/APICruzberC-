@@ -1,117 +1,101 @@
-﻿
-using APICruzber.Datos;
-using APICruzber.Interfaces;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+
 using APICruzber.Modelo;
 using Microsoft.AspNetCore.Mvc;
+using APICruzber.Datos;
+using APICruzber.Interfaces;
 
 namespace APICruzber.Controllers
 {
     [ApiController]
     [Route("api/clientes")]
-    public class ClienteController : ControllerBase
+    public class ClienteController : ControllerBase, ICliente
     {
-        private readonly ICliente _icliente; // Declara una instancia de IClienteService
+        //Declaramos la variable _cliente
+        private readonly ICliente _cliente;
 
-        // Modifica el constructor para recibir IClienteService
-        public ClienteController(ICliente icliente)
+        //Constructor de ClienteController
+        public ClienteController(ICliente cliente)                                  
         {
-            _icliente = icliente;
+            
+            _cliente = cliente;
         }
 
+        //Metodo para mostrar los clientes
         [HttpGet]
-        public async Task<ActionResult<List<ClienteModelo>>> Get()
+        public async Task<IActionResult> MostrarClientes()
         {
-            var lista = await _icliente.MostrarClientes(); // Utiliza _clienteService en lugar de crear una instancia de DatosCliente
-            return lista;
-        }
-
-        [HttpPost]
-        public async Task Post([FromBody] ClienteModelo parametros)
-        {
-            await _icliente.InsertarCliente(parametros); // Utiliza _clienteService en lugar de crear una instancia de DatosCliente
-        }
-
-        [HttpPut("{CodigoCliente}")]
-        public async Task<ActionResult> Put(string CodigoCliente, [FromBody] ClienteModelo parametros)
-        {
-            parametros.CodigoCliente = CodigoCliente;
-            await _icliente.ActualizarCliente(parametros); // Utiliza _clienteService en lugar de crear una instancia de DatosCliente
-            return NoContent();
-        }
-
-        [HttpDelete("{CodigoCliente}")]
-        public async Task<ActionResult> Delete(string CodigoCliente)
-        {
-            await _icliente.EliminarCliente(CodigoCliente); // Utiliza _clienteService en lugar de crear una instancia de DatosCliente
-            return NoContent();
-        }
-
-        [HttpGet("{codigoCliente}")]
-        public async Task<ActionResult<List<ClienteModelo>>> Get(string codigoCliente)
-        {
-            var lista = await _icliente.MostrarClientesPorCodigo(codigoCliente); // Utiliza _clienteService en lugar de crear una instancia de DatosCliente
-            if (lista == null || lista.Count() == 0)
+            try
             {
-                return NotFound();
+                // Llamar a la implementación de ICliente para mostrar clientes
+                var clientes = await _cliente.MostrarClientes();
+
+                // Devolver la lista de clientes como un OkObjectResult
+                return Ok(clientes);
             }
-            return lista;
-        }
-    }
-}
-/*
-namespace APICruzber.Controllers
-{
-    [ApiController]
-    [Route("api/clientes")]                             //Ruta que va a tomar la API
-    public class ClienteController : ControllerBase
-    {
-        [HttpGet]
-        public async Task <ActionResult<List<ClienteModelo>>> Get()
-        {
-            var funcion = new DatosCliente();                           //Metodo GetALL que se encarga de traer todos los clientes , llamando al procedimineto, y devolviendo la lista
-            var lista = await funcion.MostrarClientes();
-            return lista;
-
+            catch (Exception ex)
+            {
+                // Manejar la excepción y devolver un código de estado 500 Internal Server Error con un mensaje de error
+                Console.WriteLine($"Error al mostrar clientes: {ex.Message}");
+                return StatusCode(500, "Error interno del servidor al mostrar clientes.");
+            }
         }
 
+        //Metodo para añadir cliente 
         [HttpPost]
-        public async Task Post([FromBody] ClienteModelo parametros) 
+        public Task InsertarCliente(string CodigoCliente, string Nombre)
         {
-            var funcion = new DatosCliente();                           //Metodo Post que se encarga de insertar un cliente , llamando al procedimineto, y esperando la respuesta
-            await funcion.InsertarCliente(parametros);
+            //Devuelve el cliente que hemos insertado, llamando a la logica de InsertarCliente de DatosClientes
+            return _cliente.InsertarCliente(CodigoCliente, Nombre);
         }
 
-        [HttpPut("{CodigoCliente}")]
-        public async Task <ActionResult> Put (string CodigoCliente, [FromBody] ClienteModelo parametros)
+        //Metodo para actualizar cliente
+        [HttpPut]
+        public Task ActualizarCliente(string CodigoCliente, string Nombre)
         {
-            var funcion = new DatosCliente();                           //Metodo Put que se encarga de actualizar un cliente , llamando al procedimineto, y esperando la respuesta
-            parametros.CodigoCliente = CodigoCliente;                   //Si responde un 200 no content esque la echo correctamente 
-            await funcion.ActualizarCliente(parametros);                //Actualiza el cliente por codigo cliente 
-            return NoContent();
+            //Devuelve el cliente que hemos actualizado , llamando a la logica de ActualizarCliente de DatosCliente.
+            return _cliente.ActualizarCliente(CodigoCliente, Nombre);
         }
 
+        //Metedo para eliminar un cliente por CodigoCliente
         [HttpDelete("{CodigoCliente}")]
-        public async Task <ActionResult> Delete (string CodigoCliente) 
+        public async Task EliminarCliente(string CodigoCliente)
         {
-            var funcion = new DatosCliente();                           //Metodo Delete que se encarga de eliminar un cliente , llamando al procedimineto, y esperando la respuesta
-            var parametros = new ClienteModelo();                       //Si responde un 200 no content esque la echo correctamente
-            parametros.CodigoCliente = CodigoCliente;                   //Eliminar el cliente por sus parametros que va a ser codigo cliente 
-            await funcion.EliminarCliente(parametros);
-            return NoContent();
+            try
+            {
+                // Llamar a la implementación de ICliente para eliminar el cliente
+                await _cliente.EliminarCliente(CodigoCliente);
+
+             
+            }
+            catch (Exception ex)
+            {
+                // Manejar la excepción y devolver un código de estado 500 Internal Server Error con un mensaje de error
+                Console.WriteLine($"Error al eliminar cliente: {ex.Message}");
+               
+            }
         }
 
-        [HttpGet("{codigoCliente}")]
-        public async Task<ActionResult<List<ClienteModelo>>> Get(string codigoCliente)          //Buscar cliente por CodigoCliente
+        //Metodo para buscar un cliente por CodigoCliente
+        [HttpGet("{CodigoCliente}")]
+        public async Task<IActionResult> MostrarClientesPorCodigo(string CodigoCliente)
         {
-            var funcion = new DatosCliente();
-            var lista = await funcion.MostrarClientesPorCodigo(codigoCliente);
-            if (lista == null || lista.Count == 0)                       //Si la lista es nula o vacia devuelve un not found, si no pues devuelve la lista de clientes
-            {                                                           
-                return NotFound();
+            //return _cliente.MostrarClientesPorCodigo(CodigoCliente);
+            try
+            {
+                //Llama la ICliente para mostrar al cliente
+                var clientes = await _cliente.MostrarClientesPorCodigo(CodigoCliente);
+
+                return Ok(clientes);
             }
-            return lista;
+            catch(Exception ex)
+            {
+                // Manejar la excepción y devolver un código de estado 500 Internal Server Error con un mensaje de error
+                Console.WriteLine($"Error al mostrar cliente por codigo: {ex.Message}");
+                return StatusCode(500, "Error interno del servidor al mostrar clientes.");
+            }
         }
 
     }
 }
-*/

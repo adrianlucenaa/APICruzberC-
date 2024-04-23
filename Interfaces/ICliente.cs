@@ -1,13 +1,14 @@
-﻿using APICruzber.Modelo;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace APICruzber.Interfaces
 {
+    //Inetrfaz que define los metodos que van a llevar a mis clases
     public interface ICliente
     {
-        Task<List<ClienteModelo>> MostrarClientes();
-        Task InsertarCliente(ClienteModelo parametros);
-        Task ActualizarCliente(ClienteModelo parametros);
-        Task EliminarCliente(string codigoCliente);
-        Task<List<ClienteModelo>> MostrarClientesPorCodigo(string codigoCliente);
+        Task<IActionResult> MostrarClientes();
+        Task InsertarCliente(string CodigoCliente, string Nombre);
+        Task ActualizarCliente(string CodigoCliente, string Nombre);
+        Task EliminarCliente(string CodigoCliente);
+        Task<IActionResult> MostrarClientesPorCodigo(string CodigoCliente);
     }
 }
