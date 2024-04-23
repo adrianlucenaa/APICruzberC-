@@ -9,13 +9,16 @@ namespace APICruzber.Datos
 {
     public class DatosCliente : ICliente
     {
+        //Declaro la variable de conexion a la BBDD
         private readonly ConnectionBD _cnxdb;
 
+        //Constructor de datos cliente
         public DatosCliente(ConnectionBD cnxdb)
         {
             _cnxdb = cnxdb;
         }
 
+        //Metodo para mostrar todos los clientes
         public async Task<IActionResult> MostrarClientes()
         {
             try
@@ -34,24 +37,33 @@ namespace APICruzber.Datos
             }
         }
 
+        //Logica con la ue obtienes todos los clientes
         private async Task<List<ClienteModelo>> ObtenerClientes()
         {
+            //Declaro una lista de clientes
             var lista = new List<ClienteModelo>();
             try
             {
+                //Usamos la clase SqlConnection para conectarnos a la BBDD
                 using (var sql = new SqlConnection(_cnxdb.cadenaSQL()))
                 {
+                    //Usamos el SqlCommand para ejecutar un procedimiento almacenado
                     using (var cmd = new SqlCommand("SP_MostrarClientes", sql))
                     {
+                        //Ejecutamos el procedimiento de manera asincrona
                         await sql.OpenAsync();
+                        //Le decimos que tipo de comando es
                         cmd.CommandType = CommandType.StoredProcedure;
                         using (var reader = await cmd.ExecuteReaderAsync())
                         {
                             while (await reader.ReadAsync())
                             {
+                                //Creo un nuevo cliente
                                 var clienteModelo = new ClienteModelo();
+                                //Asignamos los valores
                                 clienteModelo.CodigoCliente = (string)reader["CodigoCliente"];
                                 clienteModelo.Nombre = (string)reader["Nombre"];
+                                //Añadimos el cliente a la lista
                                 lista.Add(clienteModelo);
                             }
                         }
@@ -61,23 +73,29 @@ namespace APICruzber.Datos
             catch (Exception ex)
             {
                 Console.WriteLine($"Error al obtener clientes: {ex.Message}");
+                //Con Throw, puedo relanzar la excepción para que pueda ser manejada por el controlador
                 throw;
             }
-            return lista;
+            return lista;     //Devuelvo la lista de clientes
         }
 
-
+        //Metodo para insertar un cliente
         public async Task InsertarCliente(string CodigoCliente, string Nombre)
         {
             try
             {
+                //Usamos la clase SqlConnection para conectarnos a la BBDD
                 using (var sql = new SqlConnection(_cnxdb.cadenaSQL()))
                 {
+                    //Usamos el SqlCommand para ejecutar un procedimiento almacenado
                     using (var cmd = new SqlCommand("SP_InsertarClientes", sql))
                     {
+                        //Le decimos que tipo de comando es
                         cmd.CommandType = CommandType.StoredProcedure;
+                        //Añadimos los valores
                         cmd.Parameters.AddWithValue("@CodigoCliente", CodigoCliente);
                         cmd.Parameters.AddWithValue("@Nombre", Nombre);
+                        //Ejecutamos el procedimiento de manera asincrona
                         await sql.OpenAsync();
                         await cmd.ExecuteNonQueryAsync();
                     }
@@ -85,22 +103,29 @@ namespace APICruzber.Datos
             }
             catch (Exception ex)
             {
+                //Imprimir por el menasaje en caso de error
                 Console.WriteLine($"Error al insertar cliente: {ex.Message}");
                 throw; // Relanzar la excepción para que pueda ser manejada por el controlador
             }
         }
 
+        //Metodo para actualizar un cliente
         public async Task ActualizarCliente(string CodigoCliente, string Nombre)
         {
             try
             {
+                //Usamos la clase SqlConnection para conectarnos a la BBDD
                 using (var sql = new SqlConnection(_cnxdb.cadenaSQL()))
                 {
+                    //Usamos el SqlCommand para ejecutar un procedimiento almacenado
                     using (var cmd = new SqlCommand("SP_ActualizarClientes", sql))
                     {
+                        //Le decimos que tipo de comando es
                         cmd.CommandType = CommandType.StoredProcedure;
+                        //Añadimos los valores
                         cmd.Parameters.AddWithValue("@CodigoCliente", CodigoCliente);
                         cmd.Parameters.AddWithValue("@Nombre", Nombre);
+                        //Ejecutamos el procedimiento de manera asincrona
                         await sql.OpenAsync();
                         await cmd.ExecuteNonQueryAsync();
                     }
@@ -108,22 +133,28 @@ namespace APICruzber.Datos
             }
             catch (Exception ex)
             {
+                //Mensaje que se va imprimir por pantalla en caso de que no actualize el cliente
                 Console.WriteLine($"Error al actualizar cliente: {ex.Message}");
                 throw; // Relanzar la excepción para que pueda ser manejada por el controlador
             }
         }
 
-
+        //Metodo para eliminar un cliente
         public async Task EliminarCliente(string CodigoCliente)
         {
             try
             {
+                //Usamos la clase SqlConnection para conectarnos a la BBDD
                 using (var sql = new SqlConnection(_cnxdb.cadenaSQL()))
                 {
+                    //Usamos el SqlCommand para ejecutar un procedimiento almacenado
                     using (var cmd = new SqlCommand("SP_EliminarClientes", sql))
                     {
+                        //Le decimos que tipo de comando es
                         cmd.CommandType = CommandType.StoredProcedure;
+                        //Añado el parametro necesario
                         cmd.Parameters.AddWithValue("@CodigoCliente", CodigoCliente);
+                        //Ejecutamos el procedimiento de manera asincrona
                         await sql.OpenAsync();
                         await cmd.ExecuteNonQueryAsync();
                     }
@@ -136,6 +167,7 @@ namespace APICruzber.Datos
             }
         }
 
+        //Metodo para mostrar un cliente por CodigoCliente
         public async Task<IActionResult> MostrarClientesPorCodigo(string CodigoCliente)
         {
             try
@@ -154,17 +186,24 @@ namespace APICruzber.Datos
             }
         }
 
+        //Logica para mostrar un cliente por CodigoCliente
         private async Task<List<ClienteModelo>> ObtenerClientesPorCodigo(string codigoCliente)
         {
+            //Declaro una lista de clientes
             var lista = new List<ClienteModelo>();
             try
             {
+                //Usamos la clase SqlConnection para conectarnos a la BBDD
                 using (var sql = new SqlConnection(_cnxdb.cadenaSQL()))
                 {
+                    //Usamos el SqlCommand para ejecutar un procedimiento almacenado
                     using (var cmd = new SqlCommand("SP_MostrarClientesPorCodigo", sql))
                     {
+                        //Añado el parametro necesario
                         cmd.Parameters.AddWithValue("@CodigoCliente", codigoCliente);
+                        //Ejecutamos el procedimiento de manera asincrona
                         await sql.OpenAsync();
+                        //Le decimos que tipo de comando es
                         cmd.CommandType = CommandType.StoredProcedure;
                         using (var reader = await cmd.ExecuteReaderAsync())
                         {
@@ -172,6 +211,7 @@ namespace APICruzber.Datos
                             {
                                 // Crear un nuevo ClienteModelo solo con el código y el nombre
                                 var clienteModelo = new ClienteModelo();
+                                //Asignamos los valores
                                 clienteModelo.CodigoCliente = (string)reader["CodigoCliente"];
                                 clienteModelo.Nombre = (string)reader["Nombre"];
                                 lista.Add(clienteModelo);
@@ -182,9 +222,11 @@ namespace APICruzber.Datos
             }
             catch (Exception ex)
             {
+                //Mensaje que se va imprimir por pantalla en caso de que no encuentre el cliente
                 Console.WriteLine($"Error al obtener cliente por código: {ex.Message}");
-                throw;
+                throw;// Relanzar la excepción para que pueda ser manejada por el controlador
             }
+            //Devuelve la lista de clientes
             return lista;
         }
 
