@@ -1,119 +1,193 @@
-﻿using APICruzber.Connection;
+﻿using System.Data;
+using System.Data.SqlClient;
+using APICruzber.Connection;
 using APICruzber.Interfaces;
 using APICruzber.Modelo;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 
 namespace APICruzber.Datos
 {
     public class DatosCliente : ICliente
     {
-        ConnectionBD cnxdb = new ConnectionBD();
+        private readonly ConnectionBD _cnxdb;
 
-        // Método para mostrar todos los clientes
-        public async Task<List<ClienteModelo>> MostrarClientes()
+        public DatosCliente(ConnectionBD cnxdb)
+        {
+            _cnxdb = cnxdb;
+        }
+
+        public async Task<IActionResult> MostrarClientes()
+        {
+            try
+            {
+                // Obtener la lista de clientes utilizando el método apropiado
+                var clientes = await ObtenerClientes(); // Reemplaza esto con el método correcto
+
+                // Devolver la lista de clientes como un OkObjectResult
+                return new OkObjectResult(clientes);
+            }
+            catch (Exception ex)
+            {
+                // Manejar la excepción y devolver un código de estado 500 Internal Server Error con un mensaje de error
+                Console.WriteLine($"Error al mostrar clientes: {ex.Message}");
+                return new StatusCodeResult(500);
+            }
+        }
+
+        private async Task<List<ClienteModelo>> ObtenerClientes()
         {
             var lista = new List<ClienteModelo>();
-            using (var sql = new SqlConnection(cnxdb.cadenaSQL()))
+            try
             {
-                using (var cmd = new SqlCommand("SP_MostrarClientes", sql))
+                using (var sql = new SqlConnection(_cnxdb.cadenaSQL()))
                 {
-                    await sql.OpenAsync();                                      // Abre la conexión asíncronamente
-                    cmd.CommandType = CommandType.StoredProcedure;              // Especifica que se está utilizando un stored procedure
-                    using (var item = await cmd.ExecuteReaderAsync())           // Ejecuta la consulta y crea un lector de datos
+                    using (var cmd = new SqlCommand("SP_MostrarClientes", sql))
                     {
-                        while (await item.ReadAsync())                          // Itera sobre cada fila del resultado
+                        await sql.OpenAsync();
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        using (var reader = await cmd.ExecuteReaderAsync())
                         {
-                            var clienteModelo = new ClienteModelo();
-                                                                                // Lee los datos de cada fila y los asigna al modelo de cliente
-                            clienteModelo.CodigoCliente = (string)item["CodigoCliente"];
-                            clienteModelo.Nombre = (string)item["Nombre"];
-                            lista.Add(clienteModelo);                           // Agrega el modelo de cliente a la lista
+                            while (await reader.ReadAsync())
+                            {
+                                var clienteModelo = new ClienteModelo();
+                                clienteModelo.CodigoCliente = (string)reader["CodigoCliente"];
+                                clienteModelo.Nombre = (string)reader["Nombre"];
+                                lista.Add(clienteModelo);
+                            }
                         }
                     }
                 }
             }
-            return lista;                                                       // Devuelve la lista de clientes
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener clientes: {ex.Message}");
+                throw;
+            }
+            return lista;
         }
 
-        // Método para insertar un nuevo cliente
-        public async Task InsertarCliente(ClienteModelo parametros)
+
+        public async Task InsertarCliente(string CodigoCliente, string Nombre)
         {
-            using (var sql = new SqlConnection(cnxdb.cadenaSQL()))
+            try
             {
-                using (var cmd = new SqlCommand("SP_InsertaarClientes", sql))                    //Usa el procedimiento almacenado 
+                using (var sql = new SqlConnection(_cnxdb.cadenaSQL()))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;                               //Utiliza un stored procedure
-                                                                                                // Añade los parámetros necesarios para la inserción del cliente
-                    cmd.Parameters.AddWithValue("@CodigoCliente", parametros.CodigoCliente);
-                    cmd.Parameters.AddWithValue("@Nombre", parametros.Nombre);
-                    await sql.OpenAsync();                                                      // Abre la conexión asíncronamente
-                    await cmd.ExecuteNonQueryAsync();                                           // Ejecuta el comando de inserción en la base de datos
+                    using (var cmd = new SqlCommand("SP_InsertarClientes", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@CodigoCliente", CodigoCliente);
+                        cmd.Parameters.AddWithValue("@Nombre", Nombre);
+                        await sql.OpenAsync();
+                        await cmd.ExecuteNonQueryAsync();
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al insertar cliente: {ex.Message}");
+                throw; // Relanzar la excepción para que pueda ser manejada por el controlador
             }
         }
 
-        // Método para actualizar los datos de un cliente existente
-        public async Task ActualizarCliente(ClienteModelo parametros)
+        public async Task ActualizarCliente(string CodigoCliente, string Nombre)
         {
-            using (var sql = new SqlConnection(cnxdb.cadenaSQL()))
+            try
             {
-                using (var cmd = new SqlCommand("SP_ActualizarClientes", sql))
+                using (var sql = new SqlConnection(_cnxdb.cadenaSQL()))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;                  
-                                                                                                // Añade los parámetros necesarios para la actualización del cliente
-                    cmd.Parameters.AddWithValue("@CodigoCliente", parametros.CodigoCliente);
-                    cmd.Parameters.AddWithValue("@Nombre", parametros.Nombre);
-                    await sql.OpenAsync();                                                      // Abre la conexión asíncronamente
-                    await cmd.ExecuteNonQueryAsync();                                           // Ejecuta el comando de actualización en la base de datos
+                    using (var cmd = new SqlCommand("SP_ActualizarClientes", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@CodigoCliente", CodigoCliente);
+                        cmd.Parameters.AddWithValue("@Nombre", Nombre);
+                        await sql.OpenAsync();
+                        await cmd.ExecuteNonQueryAsync();
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al actualizar cliente: {ex.Message}");
+                throw; // Relanzar la excepción para que pueda ser manejada por el controlador
             }
         }
 
-        // Método para eliminar un cliente
+
         public async Task EliminarCliente(string CodigoCliente)
         {
-            using (var sql = new SqlConnection(cnxdb.cadenaSQL())) 
+            try
             {
-                using (var cmd = new SqlCommand("SP_EliminarClientes", sql))
+                using (var sql = new SqlConnection(_cnxdb.cadenaSQL()))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;                                 // Añade los parámetros, que en este caso seria solo el codigo cliente, necesarios para la eliminación del cliente
-                    cmd.Parameters.AddWithValue("@CodigoCliente", CodigoCliente);
-                    await sql.OpenAsync();                                                         // Ejecuta el comando de eliminación en la base de datos
-                    await cmd.ExecuteNonQueryAsync();
+                    using (var cmd = new SqlCommand("SP_EliminarClientes", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@CodigoCliente", CodigoCliente);
+                        await sql.OpenAsync();
+                        await cmd.ExecuteNonQueryAsync();
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al eliminar cliente: {ex.Message}");
+                throw; // Relanzar la excepción para que pueda ser manejada por el controlador
+            }
         }
-        
 
-        // Método para mostrar clientes filtrados por código
-        public async Task<List<ClienteModelo>> MostrarClientesPorCodigo(string codigoCliente)
+        public async Task<IActionResult> MostrarClientesPorCodigo(string CodigoCliente)
+        {
+            try
+            {
+                // Obtener la lista de clientes utilizando el método apropiado
+                var clientes = await ObtenerClientesPorCodigo(CodigoCliente);
+
+                // Devolver la lista de clientes como un OkObjectResult
+                return new OkObjectResult(clientes);
+            }
+            catch (Exception ex)
+            {
+                // Manejar la excepción y devolver un código de estado 500 Internal Server Error con un mensaje de error
+                Console.WriteLine($"Error al mostrar cliente por código: {ex.Message}");
+                return new StatusCodeResult(500);
+            }
+        }
+
+        private async Task<List<ClienteModelo>> ObtenerClientesPorCodigo(string codigoCliente)
         {
             var lista = new List<ClienteModelo>();
-            using (var sql = new SqlConnection(cnxdb.cadenaSQL()))
+            try
             {
-                using (var cmd = new SqlCommand("SP_MoostrarClientesPorCodigo", sql))
+                using (var sql = new SqlConnection(_cnxdb.cadenaSQL()))
                 {
-                    await sql.OpenAsync(); 
-                    cmd.CommandType = CommandType.StoredProcedure; 
-                                                                                                                            // Añade el parámetro para filtrar los clientes por código
-                    cmd.Parameters.Add(new SqlParameter("@CodigoCliente", SqlDbType.VarChar) { Value = codigoCliente });
-                    using (var item = await cmd.ExecuteReaderAsync())                                                       // Ejecuta la consulta y crea un lector de datos
+                    using (var cmd = new SqlCommand("SP_MostrarClientesPorCodigo", sql))
                     {
-                        while (await item.ReadAsync())                                                                      // Itera sobre cada fila del resultado
+                        cmd.Parameters.AddWithValue("@CodigoCliente", codigoCliente);
+                        await sql.OpenAsync();
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        using (var reader = await cmd.ExecuteReaderAsync())
                         {
-                            var clienteModelo = new ClienteModelo();
-                                                                                                                            // Lee los datos de cada fila y los asigna al modelo de cliente
-                            clienteModelo.CodigoCliente = (string)item["CodigoCliente"];
-                            clienteModelo.Nombre = (string)item["Nombre"];
-                            lista.Add(clienteModelo);                                                                           
+                            while (await reader.ReadAsync())
+                            {
+                                // Crear un nuevo ClienteModelo solo con el código y el nombre
+                                var clienteModelo = new ClienteModelo();
+                                clienteModelo.CodigoCliente = (string)reader["CodigoCliente"];
+                                clienteModelo.Nombre = (string)reader["Nombre"];
+                                lista.Add(clienteModelo);
+                            }
                         }
                     }
                 }
             }
-            return lista;                                                                                                   // Devuelve la lista de clientes filtrados por código
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener cliente por código: {ex.Message}");
+                throw;
+            }
+            return lista;
         }
+
+
     }
 }
