@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace APICruzber.Datos
 {
+   
     public class DatosCliente : ICliente
     {
         //Declaro la variable de conexion a la BBDD

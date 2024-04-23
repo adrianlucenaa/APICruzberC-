@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-
 using APICruzber.Modelo;
 using Microsoft.AspNetCore.Mvc;
 using APICruzber.Datos;
@@ -25,6 +24,7 @@ namespace APICruzber.Controllers
 
         //Metodo para mostrar los clientes
         [HttpGet]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> MostrarClientes()
         {
             try
