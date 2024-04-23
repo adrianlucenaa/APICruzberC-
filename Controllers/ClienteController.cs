@@ -9,6 +9,7 @@ using APICruzber.Interfaces;
 namespace APICruzber.Controllers
 {
     [ApiController]
+    //La ruta que va  a tomar para acceder a la API
     [Route("api/clientes")]
     public class ClienteController : ControllerBase, ICliente
     {
