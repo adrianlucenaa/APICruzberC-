@@ -82,3 +82,11 @@ C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\obj\Debug\ne
 C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\obj\Debug\net6.0\APICruzber.pdb
 C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\obj\Debug\net6.0\APICruzber.genruntimeconfig.cache
 C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\obj\Debug\net6.0\ref\APICruzber.dll
+C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Humanizer.dll
+C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.dll
+C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Design.dll
+C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Relational.dll
+C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Microsoft.Extensions.Caching.Memory.dll
+C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Newtonsoft.Json.dll
