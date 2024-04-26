@@ -7,8 +7,15 @@ C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\ne
 C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\APICruzber.pdb
 C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Azure.Core.dll
 C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Azure.Identity.dll
+C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Humanizer.dll
+C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Microsoft.Bcl.AsyncInterfaces.dll
 C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Microsoft.Data.SqlClient.dll
+C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.dll
+C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Design.dll
+C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Relational.dll
+C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Microsoft.Extensions.Caching.Memory.dll
 C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Microsoft.Identity.Client.dll
 C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Microsoft.Identity.Client.Extensions.Msal.dll
 C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Microsoft.IdentityModel.Abstractions.dll
@@ -20,6 +27,7 @@ C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\ne
 C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Microsoft.OpenApi.dll
 C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Microsoft.SqlServer.Server.dll
 C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Newtonsoft.Json.dll
 C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Swashbuckle.AspNetCore.SwaggerUI.dll
@@ -82,11 +90,3 @@ C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\obj\Debug\ne
 C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\obj\Debug\net6.0\APICruzber.pdb
 C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\obj\Debug\net6.0\APICruzber.genruntimeconfig.cache
 C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\obj\Debug\net6.0\ref\APICruzber.dll
-C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Humanizer.dll
-C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
-C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.dll
-C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Abstractions.dll
-C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Design.dll
-C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Relational.dll
-C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Microsoft.Extensions.Caching.Memory.dll
-C:\Users\Administrador.200SERVER\source\repos\APICruzber\APICruzber\bin\Debug\net6.0\Newtonsoft.Json.dll
