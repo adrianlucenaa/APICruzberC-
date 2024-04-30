@@ -7,5 +7,7 @@ namespace APICruzber.Modelo
         public String usuario { get; set; }
 
         public String password { get; set; }
+
+        
     }
 }
