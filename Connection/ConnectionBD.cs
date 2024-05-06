@@ -14,7 +14,7 @@ namespace APICruzber.Connection
         {
             var mybuilder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
             ConnectionString = mybuilder.GetSection("ConnectionStrings:ConexionBD").Value;
-            Console.WriteLine(ConnectionString.ToString());                 //Obtiene la cadena de la base de datos, mediante el appsetting , que dentro lleva el connecyion string que ese connection string,
+            Console.WriteLine(ConnectionString.ToString());                 //Obtiene la cadena de la base de datos, mediante el appsetting , que dentro lleva el connection string que ese connection string,
         }                                                                   //lleva la cadena de conexion a la base de datos.
         public string cadenaSQL()
         {

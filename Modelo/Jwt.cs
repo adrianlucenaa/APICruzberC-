@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 ﻿
 using APICruzber.Connection;
 using APICruzber.Controllers;
@@ -6,10 +7,20 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Data.SqlClient;
 using System.Security.Claims;
+=======
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
+>>>>>>> Stashed changes
 
 namespace APICruzber.Modelo
 {
-    public class Jwt
+    //Modelo del Jwt
+    public class Jwt : ControllerBase
     {
         public readonly string Key;
 
@@ -19,6 +30,7 @@ namespace APICruzber.Modelo
 
         public string Subject { get; set; }
 
+<<<<<<< Updated upstream
         public IConfiguration _configuration;
 
         public  ConnectionBD _cnxdb;
@@ -86,5 +98,7 @@ namespace APICruzber.Modelo
                 
             }
         }
+=======
+>>>>>>> Stashed changes
     }
 }

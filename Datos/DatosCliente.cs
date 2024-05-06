@@ -38,7 +38,7 @@ namespace APICruzber.Datos
             }
         }
 
-        //Logica con la ue obtienes todos los clientes
+        //Logica con la que obtienes todos los clientes
         private async Task<List<ClienteModelo>> ObtenerClientes()
         {
             //Declaro una lista de clientes

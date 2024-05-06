@@ -4,17 +4,26 @@ using APICruzber.Modelo;
 using Microsoft.AspNetCore.Mvc;
 using APICruzber.Datos;
 using APICruzber.Interfaces;
+<<<<<<< Updated upstream
 using System.Security.Claims;
 using Microsoft.Extensions.Configuration;
 using APICruzber.Connection;
 using Microsoft.AspNetCore.Authorization;
+=======
+using Microsoft.AspNetCore.Authorization;
+using System.ComponentModel.DataAnnotations;
+>>>>>>> Stashed changes
 
 namespace APICruzber.Controllers
 {
     [ApiController]
     //La ruta que va  a tomar para acceder a la API
     [Route("api/clientes")]
+<<<<<<< Updated upstream
     //[Authorize]
+=======
+    [Authorize]
+>>>>>>> Stashed changes
     public class ClienteController : ControllerBase, ICliente
     {
         //Declaramos la variable _cliente
@@ -56,7 +65,9 @@ namespace APICruzber.Controllers
 
         //Metodo para añadir cliente 
         [HttpPost]
-        public Task InsertarCliente(string CodigoCliente, string Nombre)
+        
+        public Task InsertarCliente([StringLength(7, MinimumLength = 6, ErrorMessage = "Debe tener entre 6 y 7 caracteres.")] string CodigoCliente,
+            [StringLength(20, MinimumLength = 3, ErrorMessage = "Debe tener entre 3 y 20 caracteres.")]  string Nombre)
         {
             //Devuelve el cliente que hemos insertado, llamando a la logica de InsertarCliente de DatosClientes
             return _cliente.InsertarCliente(CodigoCliente, Nombre);
@@ -64,7 +75,8 @@ namespace APICruzber.Controllers
 
         //Metodo para actualizar cliente
         [HttpPut]
-        public Task ActualizarCliente(string CodigoCliente, string Nombre)
+        public Task ActualizarCliente([StringLength(7, MinimumLength = 6, ErrorMessage = "Debe tener entre 6 y 7 caracteres.")] string CodigoCliente,
+            [StringLength(20, MinimumLength = 3, ErrorMessage = "Debe tener entre 3 y 20 caracteres.")] string Nombre)
         {
             //Devuelve el cliente que hemos actualizado , llamando a la logica de ActualizarCliente de DatosCliente.
             return _cliente.ActualizarCliente(CodigoCliente, Nombre);
@@ -72,7 +84,7 @@ namespace APICruzber.Controllers
 
         //Metedo para eliminar un cliente por CodigoCliente
         [HttpDelete("{CodigoCliente}")]
-        public async Task EliminarCliente(string CodigoCliente)
+        public async Task EliminarCliente([StringLength(7, MinimumLength = 6, ErrorMessage = "Debe tener entre 6 y 7 caracteres.")] string CodigoCliente)
         {
             try
             {
@@ -91,7 +103,7 @@ namespace APICruzber.Controllers
 
         //Metodo para buscar un cliente por CodigoCliente
         [HttpGet("{CodigoCliente}")]
-        public async Task<IActionResult> MostrarClientesPorCodigo(string CodigoCliente)
+        public async Task<IActionResult> MostrarClientesPorCodigo([StringLength(7, MinimumLength = 6, ErrorMessage = "Debe tener entre 6 y 7 caracteres.")] string CodigoCliente)
         {
             //return _cliente.MostrarClientesPorCodigo(CodigoCliente);
             try
