@@ -168,6 +168,7 @@ namespace APICruzber.Datos
             }
         }
 
+
         //Metodo para mostrar un cliente por CodigoCliente
         public async Task<IActionResult> MostrarClientesPorCodigo(string CodigoCliente)
         {
