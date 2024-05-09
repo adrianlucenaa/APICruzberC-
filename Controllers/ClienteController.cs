@@ -4,26 +4,26 @@ using APICruzber.Modelo;
 using Microsoft.AspNetCore.Mvc;
 using APICruzber.Datos;
 using APICruzber.Interfaces;
-<<<<<<< Updated upstream
+
 using System.Security.Claims;
 using Microsoft.Extensions.Configuration;
 using APICruzber.Connection;
 using Microsoft.AspNetCore.Authorization;
-=======
+
 using Microsoft.AspNetCore.Authorization;
 using System.ComponentModel.DataAnnotations;
->>>>>>> Stashed changes
+
 
 namespace APICruzber.Controllers
 {
     [ApiController]
     //La ruta que va  a tomar para acceder a la API
     [Route("api/clientes")]
-<<<<<<< Updated upstream
-    //[Authorize]
-=======
+
+ 
+
     [Authorize]
->>>>>>> Stashed changes
+
     public class ClienteController : ControllerBase, ICliente
     {
         //Declaramos la variable _cliente
