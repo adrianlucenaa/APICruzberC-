@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using APICruzber.Connection;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace APICruzber.Modelo
@@ -12,6 +13,6 @@ namespace APICruzber.Modelo
         [StringLength(20, MinimumLength = 3, ErrorMessage = "La contraseña debe tener entre 3 y 20 caracteres.")]
         public String password { get; set; }
 
-        
+      
     }
 }

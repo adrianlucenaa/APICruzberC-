@@ -1,4 +1,3 @@
-
 using APICruzber.Datos;
 using APICruzber.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,12 +13,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
 builder.Services.AddSwaggerGen(c =>
 {
-<<<<<<< Updated upstream
     c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "APICruzber", Version = "v1" });
 
     c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
@@ -64,7 +60,7 @@ builder.Services.AddAuthentication(config =>
     config.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("estosoloesunaclavedepruebaadmincruzber08")),
         ValidateIssuer = false,
         ValidateAudience = false,
     };
@@ -75,75 +71,22 @@ builder.Services.AddScoped<ConnectionBD>();
 builder.Services.AddScoped<DatosCliente>();
 builder.Services.AddScoped<ICliente, DatosCliente>();
 
-
 builder.Services.AddControllers();
-=======
-    //Titulo Diseño
-        c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "APICruzber", Version = "v1" });
 
-        //Bototn AUtorize
-        c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-        {
-            Description = "Jwt Authorization",
-            Name = "Authorization",
-            In = ParameterLocation.Header,
-            Type = SecuritySchemeType.ApiKey,
-            Scheme = "Bearer"
-        });
+var app = builder.Build();
 
-        c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer" //Id de la Clave de Segurida
-                }
-            },
-            new List<string>() // The list of scopes or permissions required
-        }
->>>>>>> Stashed changes
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
-    });
-});
+app.UseHttpsRedirection();
 
-    builder.Services.AddScoped<ConnectionBD>();
-    builder.Services.AddScoped<DatosCliente>();
-    builder.Services.AddScoped<ICliente, DatosCliente>();
-    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = false,
-            ValidateAudience = false,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuser"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-        };
-    }
-    );
+app.UseAuthentication();
 
-builder.Services.AddAuthorization();
+app.UseAuthorization();
 
-    var app = builder.Build();
+app.MapControllers();
 
-    if (app.Environment.IsDevelopment())
-    {
-        app.UseSwagger();
-        app.UseSwaggerUI();
-    }
-
-    app.UseHttpsRedirection();
-
-    app.UseAuthentication();
-
-    app.UseAuthorization();
-
-    app.MapControllers();
-
-
-    app.Run();
+app.Run();

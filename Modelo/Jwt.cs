@@ -1,28 +1,17 @@
-<<<<<<< Updated upstream
-﻿
 using APICruzber.Connection;
-using APICruzber.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Data.SqlClient;
 using System.Security.Claims;
-=======
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
->>>>>>> Stashed changes
+using System.Linq;
 
 namespace APICruzber.Modelo
 {
     //Modelo del Jwt
-    public class Jwt : ControllerBase
+    public class Jwt 
     {
-        public readonly string Key;
+        public  string Key;
 
         public string Issuer { get; set; }
 
@@ -30,75 +19,67 @@ namespace APICruzber.Modelo
 
         public string Subject { get; set; }
 
-<<<<<<< Updated upstream
         public IConfiguration _configuration;
 
-        public  ConnectionBD _cnxdb;
-
-        public string _connectionStrings;
-
+        public ConnectionBD _cnxdb;
         
-        public Jwt( )
+        public string connectionString = "data source=200SERVER;initial catalog=Cruzber;user=logic;password=Sage2009+";
+
+        public Jwt()
         {
-            
         }
 
-        public Jwt(IConfiguration configuration,ConnectionBD cnxdb)
+        public Jwt(IConfiguration configuration, ConnectionBD cnxdb)
         {
             Key = configuration.GetSection("Jwt").GetSection("Key").ToString();
             _cnxdb = cnxdb;
-            _connectionStrings = configuration.GetConnectionString("ConnectionStrings:ConexionBD");
+            connectionString = configuration.GetConnectionString("ConnectionStrings:ConexionBD");
             configuration.GetSection("Jwt").Bind(this);
         }
-
-        
-
-        public  dynamic ValidarToken(ClaimsIdentity identity )
+        /*
+        public dynamic ValidarToken(ClaimsIdentity identity)
         {
-
-                    
-            
-
-            try
+            using (SqlConnection connection = new SqlConnection(_cnxdb.cadenaSQL()))
             {
-                
-                SqlConnection  connection = new SqlConnection(_cnxdb.cadenaSQL());
-
-                if (identity.Claims.Count() == 0)
+                try
                 {
 
-                    return new
+                    if (identity.Claims.Count() == 0)
                     {
-                        success = false,
-                        message = "Verificando si estas ingresando un token valido",
-                        result = ""
-                    };
+                        return new
+                        {
+                            succes = false,
+                            message = "Verificando si estas ingresando un token valido",
+                            result = ""
 
-                }else 
-                {
-                    var usuario = identity.Claims.FirstOrDefault(x => x.Type == "usuario").Value;
+                        };
+                    }
+                    //Obtenemos el usuario por nombre de usuario
 
+                    var cc = identity.Claims.FirstOrDefault(x => x.Type == "CodigoCliente").Value;
+
+                    //ClienteModelo clientes  = .FirstOrDefautl(x => x.usuario == Usuario);
+                    
                     return new
                     {
                         success = true,
                         message = "Token valido",
-                        result = usuario
+                        //result = 
+                    };
+                    
+                    //return clientes;
+                }
+                catch (Exception ex)
+                {
+                    return new
+                    {
+                        success = false,
+                        message = "Catch:" + ex.Message,
+                        result = ""
                     };
                 }
-               
-            }
-            catch (Exception ex)
-            {
-                return new
-                {
-                    success = false,
-                    message = "Error al obtener la cadena de conexión: " + ex.Message,
-                    result = ""
-                };
-                
             }
         }
-=======
->>>>>>> Stashed changes
+        */
     }
 }

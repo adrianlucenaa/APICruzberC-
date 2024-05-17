@@ -1,167 +1,273 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using APICruzber.Modelo;
-using Microsoft.AspNetCore.Mvc;
-using APICruzber.Datos;
-using APICruzber.Interfaces;
-
-using System.Security.Claims;
-using Microsoft.Extensions.Configuration;
-using APICruzber.Connection;
-using Microsoft.AspNetCore.Authorization;
-
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using APICruzber.Connection;
+using APICruzber.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using APICruzber.Controllers;
+using Microsoft.Extensions.Configuration;
+using APICruzber.Modelo;
 
 
 namespace APICruzber.Controllers
 {
     [ApiController]
-    //La ruta que va  a tomar para acceder a la API
     [Route("api/clientes")]
-
- 
-
     [Authorize]
-
     public class ClienteController : ControllerBase, ICliente
     {
-        //Declaramos la variable _cliente
-        private readonly ICliente _cliente;
+        public readonly ConnectionBD _cnxdb;
+        public readonly IConfiguration _configuration;
+        public readonly ICliente _cliente;
 
-        public IConfiguration _configuration;
-        private ConnectionBD _cnxdb;
-
-
-
-        //Constructor de ClienteController
-        public ClienteController(IConfiguration configuration, ICliente cliente, ConnectionBD cnxdb)
+        public ClienteController(IConfiguration configuration, ConnectionBD cnxdb, ICliente cliente)
         {
             _configuration = configuration;
-            _cliente = cliente;
             _cnxdb = cnxdb;
+            _cliente = cliente;
         }
-
-        //Metodo para mostrar los clientes
-        [HttpGet]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<IActionResult> MostrarClientes()
-        {
-            try
-            {
-                // Llamar a la implementación de ICliente para mostrar clientes
-                var clientes = await _cliente.MostrarClientes();
-
-                // Devolver la lista de clientes como un OkObjectResult
-                return Ok(clientes);
-            }
-            catch (Exception ex)
-            {
-                // Manejar la excepción y devolver un código de estado 500 Internal Server Error con un mensaje de error
-                Console.WriteLine($"Error al mostrar clientes: {ex.Message}");
-                return StatusCode(500, "Error interno del servidor al mostrar clientes.");
-            }
-        }
-
-        //Metodo para añadir cliente 
-        [HttpPost]
         
-        public Task InsertarCliente([StringLength(7, MinimumLength = 6, ErrorMessage = "Debe tener entre 6 y 7 caracteres.")] string CodigoCliente,
-            [StringLength(20, MinimumLength = 3, ErrorMessage = "Debe tener entre 3 y 20 caracteres.")]  string Nombre)
+
+        [HttpPut]
+        public async Task<IActionResult> ActualizarCliente(
+        [Required, StringLength(7, MinimumLength = 6, ErrorMessage = "Debe tener entre 6 y 7 caracteres.")] string CodigoCliente,
+        [StringLength(20, MinimumLength = 3, ErrorMessage = "Debe tener entre 3 y 20 caracteres.")] string Nombre)
         {
-            //Devuelve el cliente que hemos insertado, llamando a la logica de InsertarCliente de DatosClientes
-            return _cliente.InsertarCliente(CodigoCliente, Nombre);
+            // Obtenemos el token
+            var authHeader = HttpContext.Request.Headers["Authorization"];
+
+            // Comprobamos si el token existe
+            if (authHeader != "null" && authHeader.ToString().StartsWith("Bearer "))
+            {
+                var token = authHeader.ToString().Substring(7);
+
+                // Validar el token JWT
+                var usuarioController = new UsuarioController(_configuration, _cnxdb);
+                var esValido = usuarioController.ValidarToken(token);
+
+                if (esValido)
+                {
+                    // Verificar la existencia del cliente
+                    var actionResult = await _cliente.MostrarClientesPorCodigo(CodigoCliente);
+                    var okObjectResult = actionResult as OkObjectResult;
+                    var clientes = okObjectResult?.Value as List<ClienteModelo>;
+
+                    if (clientes != null && clientes.Any())
+                    {
+                        var primerCliente = clientes.First();
+                        // Actualizar el cliente solo si se proporciona un nombre válido
+                        if (!string.IsNullOrWhiteSpace(Nombre))
+                        {
+                            var resultado = await _cliente.ActualizarCliente(CodigoCliente, Nombre);
+                            return resultado;
+                        }
+                        else
+                        {
+                            return BadRequest(new { message = "El nombre es obligatorio para la actualización" });
+                        }
+                    }
+                    else
+                    {
+                        return BadRequest(new { message = "Cliente no encontrado" });
+                    }
+                }
+                else
+                {
+                    return Unauthorized(new { message = "Token no válido" });
+                }
+            }
+            else
+            {
+                return Unauthorized(new { message = "Token no proporcionado o incorrecto" });
+            }
         }
 
-        //Metodo para actualizar cliente
-        [HttpPut]
-        public Task ActualizarCliente([StringLength(7, MinimumLength = 6, ErrorMessage = "Debe tener entre 6 y 7 caracteres.")] string CodigoCliente,
+        [HttpDelete("{CodigoCliente}")]
+        public async Task<IActionResult> EliminarCliente([StringLength(7, MinimumLength = 6, ErrorMessage = "Debe tener entre 6 y 7 caracteres.")] string CodigoCliente)
+        {
+            //Obtenemos el token
+            var authHeader = HttpContext.Request.Headers["Authorization"];
+
+            //Comprobamos si el token existe
+            if (authHeader != "null" && authHeader.ToString().StartsWith("Bearer "))
+            {
+                var token = authHeader.ToString().Substring(7);
+
+                // Aquí creas una instancia de UsuarioController
+                var usuarioController = new UsuarioController(_configuration, _cnxdb);
+
+                // Aquí validas el token JWT
+                var esValido = usuarioController.ValidarToken(token);
+                if (esValido)
+                {
+                    // Verificar la existencia del cliente
+                    var actionResult = await _cliente.MostrarClientesPorCodigo(CodigoCliente);
+                    var okObjectResult = actionResult as OkObjectResult;
+                    var clientes = okObjectResult?.Value as List<ClienteModelo>;
+                    if (clientes != null && clientes.Any())
+                    {
+                        var primerCliente = clientes.First();
+                        await _cliente.EliminarCliente(CodigoCliente);
+                        return Ok(new { message = "Cliente eliminado correctamente" });
+                    }
+                    else {
+                        return BadRequest(new { message = "Cliente Incorrecto" });
+                    }
+                }
+                else
+                {
+                    return Unauthorized(new { message = "Error al eliminar cliente" });
+                }
+            }
+            else
+            {
+                return BadRequest(new { message = "Token no proporcionado o incorrecto" });
+            }
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> InsertarCliente([StringLength(7, MinimumLength = 6, ErrorMessage = "Debe tener entre 6 y 7 caracteres.")] string CodigoCliente,
             [StringLength(20, MinimumLength = 3, ErrorMessage = "Debe tener entre 3 y 20 caracteres.")] string Nombre)
         {
-            //Devuelve el cliente que hemos actualizado , llamando a la logica de ActualizarCliente de DatosCliente.
-            return _cliente.ActualizarCliente(CodigoCliente, Nombre);
+            //Obtenemos el token
+            var authHeader = HttpContext.Request.Headers["Authorization"];
+
+            //Comprobamos si el token existe
+            if (authHeader != "null" && authHeader.ToString().StartsWith("Bearer "))
+            {
+                var token = authHeader.ToString().Substring(7);
+
+                // Aquí creas una instancia de UsuarioController
+                var usuarioController = new UsuarioController(_configuration, _cnxdb);
+
+                // Aquí validas el token JWT
+                var esValido = usuarioController.ValidarToken(token);
+                if (esValido)
+                {
+                    await _cliente.InsertarCliente(CodigoCliente, Nombre);
+                    return Ok(new { message = "Cliente insertado correctamente" });
+                }
+                else
+                {
+                    return BadRequest(new { message = "Cliente Incorrecto faltan campos o no existe" });
+                }
+            }
+            else
+            {
+                return Unauthorized(new { message = "Error al actualizar cliente, falta el token o esta incorrecto" });
+            }
         }
+        
 
-        //Metedo para eliminar un cliente por CodigoCliente
-        [HttpDelete("{CodigoCliente}")]
-        public async Task EliminarCliente([StringLength(7, MinimumLength = 6, ErrorMessage = "Debe tener entre 6 y 7 caracteres.")] string CodigoCliente)
+        [HttpGet]
+        public async Task<IActionResult> MostrarClientes()
         {
-            try
+            //Obtenemos el token
+            var authHeader = HttpContext.Request.Headers["Authorization"];
+
+            //Comprobamos si el token existe
+            if (authHeader != "null" && authHeader.ToString().StartsWith("Bearer "))
             {
-                // Llamar a la implementación de ICliente para eliminar el cliente
-                await _cliente.EliminarCliente(CodigoCliente);
+                var token = authHeader.ToString().Substring(7);
 
+                // Aquí creas una instancia de UsuarioController
+                var usuarioController = new UsuarioController(_configuration, _cnxdb);
 
+                // Aquí validas el token JWT
+                var esValido = usuarioController.ValidarToken(token);
+                if (esValido)
+                {
+                    var clientes = await _cliente.MostrarClientes();
+                    return Ok(clientes);
+                }
+                else
+                {
+                    return BadRequest(new { message = "Error al mostrar clientes" });
+                }
             }
-            catch (Exception ex)
+            else
             {
-                // Manejar la excepción y devolver un código de estado 500 Internal Server Error con un mensaje de error
-                Console.WriteLine($"Error al eliminar cliente: {ex.Message}");
-
-            }
-        }
-
-        //Metodo para buscar un cliente por CodigoCliente
-        [HttpGet("{CodigoCliente}")]
-        public async Task<IActionResult> MostrarClientesPorCodigo([StringLength(7, MinimumLength = 6, ErrorMessage = "Debe tener entre 6 y 7 caracteres.")] string CodigoCliente)
-        {
-            //return _cliente.MostrarClientesPorCodigo(CodigoCliente);
-            try
-            {
-                //Llama la ICliente para mostrar al cliente
-                var clientes = await _cliente.MostrarClientesPorCodigo(CodigoCliente);
-
-                return Ok(clientes);
-            }
-            catch (Exception ex)
-            {
-                // Manejar la excepción y devolver un código de estado 500 Internal Server Error con un mensaje de error
-                Console.WriteLine($"Error al mostrar cliente por codigo: {ex.Message}");
-                return StatusCode(500, "Error interno del servidor al mostrar clientes.");
+                return Unauthorized(new { message = "Error al devolver los clientes, falta el token o esta incorrecto" });
             }
         }
 
         /*
-        
-        [HttpPost]
-        [Route("eliminar")]
-        public dynamic EliminarCliente(ClienteModelo cliente)
+        [HttpGet("{CodigoCliente}")]
+        public async Task<IActionResult> MostrarClientesPorCodigo([StringLength(7, MinimumLength = 6, ErrorMessage = "Debe tener entre 6 y 7 caracteres.")] string CodigoCliente)
         {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            //Obtenemos el token
+            var authHeader = HttpContext.Request.Headers["Authorization"];
 
-            // Crear una instancia de la clase Jwt
-            var jwt = new Jwt(_configuration, _cnxdb);
-
-            // Llamar al método ValidarToken en la instancia de Jwt
-            var respuestaToken = jwt.Validar(identity);
-
-            if (identity == null)
+            //Comprobamos si el token existe
+            if (authHeader != "null" && authHeader.ToString().StartsWith("Bearer "))
             {
-                return new
+                var token = authHeader.ToString().Substring(7);
+
+                // Aquí creas una instancia de UsuarioController
+                var usuarioController = new UsuarioController(_configuration, _cnxdb);
+
+                // Aquí validas el token JWT
+                var esValido = usuarioController.ValidarToken(token);
+                if (esValido)
                 {
-                    success = false,
-                    message = "No se pudo obtener la identidad del usuario",
-                    result = ""
-                };
-            }
 
-            if (!respuestaToken.success)
-            {
-                return respuestaToken;
+                    var clientes = await _cliente.MostrarClientesPorCodigo(CodigoCliente);
+                    return Ok(clientes);
+                }
+                else
+                {
+                    return BadRequest(new { message = "Error al mostrar cliente por su codigo" });
+                }
             }
-
-            return new
+            else
             {
-                success = true,
-                message = "Cliente eliminado correctamente",
-                result = cliente
-            };
+                return Unauthorized(new { message = "Error al devolver los clientes, falta el token o esta incorrecto" });
+            }
         }
-        
-       */
+        */
 
-        
+        [HttpGet("{CodigoCliente}")]
+        public async Task<IActionResult> MostrarClientesPorCodigo([StringLength(7, MinimumLength = 6, ErrorMessage = "Debe tener entre 6 y 7 caracteres.")] string CodigoCliente)
+        {
+            //Obtenemos el token
+            var authHeader = HttpContext.Request.Headers["Authorization"];
 
+            //Comprobamos si el token existe
+            if (authHeader != "null" && authHeader.ToString().StartsWith("Bearer "))
+            {
+                var token = authHeader.ToString().Substring(7);
+
+                // Aquí creas una instancia de UsuarioController
+                var usuarioController = new UsuarioController(_configuration, _cnxdb);
+
+                // Aquí validas el token JWT
+                var esValido = usuarioController.ValidarToken(token);
+                if (esValido)
+                {
+                    var actionResult = await _cliente.MostrarClientesPorCodigo(CodigoCliente);
+                    var okObjectResult = actionResult as OkObjectResult;
+                    var clientes = okObjectResult?.Value as List<ClienteModelo>; // Ajusta ClienteModelo al tipo correcto
+
+                    if (clientes != null && clientes.Any())
+                    {
+                        var primerCliente = clientes.First();
+                        return Ok(primerCliente);
+                    }
+                    else
+                    {
+                        return BadRequest(new { message = "No se encontraron clientes para el código proporcionado" });
+                    }
+                }
+                else
+                {
+                    return BadRequest(new { message = "Error al mostrar cliente por su código" });
+                }
+            }
+            else
+            {
+                return Unauthorized(new { message = "Error al devolver los clientes, falta el token o está incorrecto" });
+            }
+        }
     }
 }
 
