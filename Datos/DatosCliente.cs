@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace APICruzber.Datos
 {
-   
     public class DatosCliente : ICliente
     {
         //Declaro la variable de conexion a la BBDD
@@ -22,7 +21,6 @@ namespace APICruzber.Datos
         //Metodo para mostrar todos los clientes
         public async Task<IActionResult> MostrarClientes()
         {
-
 
             try
             {
@@ -237,7 +235,5 @@ namespace APICruzber.Datos
             //Devuelve la lista de clientes
             return lista;
         }
-
-
     }
 }

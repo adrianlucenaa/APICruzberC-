@@ -124,7 +124,6 @@ namespace APICruzber.Controllers
             }
         }
 
-
         [HttpPost]
         public async Task<IActionResult> InsertarCliente([StringLength(7, MinimumLength = 6, ErrorMessage = "Debe tener entre 6 y 7 caracteres.")] string CodigoCliente,
             [StringLength(20, MinimumLength = 3, ErrorMessage = "Debe tener entre 3 y 20 caracteres.")] string Nombre)
@@ -157,7 +156,6 @@ namespace APICruzber.Controllers
                 return Unauthorized(new { message = "Error al actualizar cliente, falta el token o esta incorrecto" });
             }
         }
-        
 
         [HttpGet]
         public async Task<IActionResult> MostrarClientes()
@@ -190,41 +188,6 @@ namespace APICruzber.Controllers
                 return Unauthorized(new { message = "Error al devolver los clientes, falta el token o esta incorrecto" });
             }
         }
-
-        /*
-        [HttpGet("{CodigoCliente}")]
-        public async Task<IActionResult> MostrarClientesPorCodigo([StringLength(7, MinimumLength = 6, ErrorMessage = "Debe tener entre 6 y 7 caracteres.")] string CodigoCliente)
-        {
-            //Obtenemos el token
-            var authHeader = HttpContext.Request.Headers["Authorization"];
-
-            //Comprobamos si el token existe
-            if (authHeader != "null" && authHeader.ToString().StartsWith("Bearer "))
-            {
-                var token = authHeader.ToString().Substring(7);
-
-                // Aquí creas una instancia de UsuarioController
-                var usuarioController = new UsuarioController(_configuration, _cnxdb);
-
-                // Aquí validas el token JWT
-                var esValido = usuarioController.ValidarToken(token);
-                if (esValido)
-                {
-
-                    var clientes = await _cliente.MostrarClientesPorCodigo(CodigoCliente);
-                    return Ok(clientes);
-                }
-                else
-                {
-                    return BadRequest(new { message = "Error al mostrar cliente por su codigo" });
-                }
-            }
-            else
-            {
-                return Unauthorized(new { message = "Error al devolver los clientes, falta el token o esta incorrecto" });
-            }
-        }
-        */
 
         [HttpGet("{CodigoCliente}")]
         public async Task<IActionResult> MostrarClientesPorCodigo([StringLength(7, MinimumLength = 6, ErrorMessage = "Debe tener entre 6 y 7 caracteres.")] string CodigoCliente)
@@ -270,4 +233,3 @@ namespace APICruzber.Controllers
         }
     }
 }
-
