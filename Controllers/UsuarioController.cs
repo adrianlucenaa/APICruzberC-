@@ -1,4 +1,5 @@
-﻿using APICruzber.Connection;
+﻿
+using APICruzber.Connection;
 using APICruzber.Modelo;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -8,6 +9,9 @@ using System.Security.Claims;
 using System.Text;
 using System.Data.SqlClient;
 using System.Security.Cryptography;
+using Microsoft.Extensions.Configuration;
+using System.Numerics;
+using System.Data.SqlTypes;
 
 namespace APICruzber.Controllers
 {
@@ -16,30 +20,20 @@ namespace APICruzber.Controllers
     //Controller del usuario
     public class UsuarioController : ControllerBase
     {
-<<<<<<< Updated upstream
-       
-        public IConfiguration _configuration;
-        public ConnectionBD _cnxdb;
-        public string _connectionStrings;
-
-        public UsuarioController(IConfiguration configuration, ConnectionBD cnxdb)
-        {
-            
-=======
-        //Variables de la clase
+        
         public readonly IConfiguration _configuration;
         public ConnectionBD _cnxdb;
         public string _connectionStrings;
 
         //Constructor
         public UsuarioController(IConfiguration configuration, ConnectionBD cnxdb)
-        {           
->>>>>>> Stashed changes
+        {
+            
             _configuration = configuration;
             _cnxdb = cnxdb;
             _connectionStrings = configuration.GetConnectionString("ConnectionStrings");
         }
-
+       
         [HttpPost]
         [Route("login")]
         //Metodo para iniciar sesion, con usuario existente en la base de datos
@@ -48,25 +42,16 @@ namespace APICruzber.Controllers
             //Deserializamos el JSON para obtener los datos
             var data = JsonConvert.DeserializeObject<dynamic>(OptData.ToString());
 
-<<<<<<< Updated upstream
-            string usuario = data.usuario?.ToString();
-            string password = data.password?.ToString();
-            //string rol = data.rol.ToString();
-=======
+            var jwtConfig = _configuration.GetSection("Jwt");
+            //string jwtKey = jwtConfig["Key"];
+
             string usuario = data.usuario.ToString();
             string password = data.password.ToString();
-
->>>>>>> Stashed changes
 
             //Conectamos con la base de datos
             using (SqlConnection connection = new SqlConnection(_cnxdb.cadenaSQL()))
             {
-<<<<<<< Updated upstream
-=======
-
-
                 //Comprobamos si el usuario existe
->>>>>>> Stashed changes
                 if (usuario == null)
                 {
                     return new
@@ -78,25 +63,7 @@ namespace APICruzber.Controllers
                 }
 
                 var jwt = _configuration.GetSection("Jwt").Get<Jwt>();
-<<<<<<< Updated upstream
-                /*
-                if (jwt.Key == null)
-                {
-                    // Manejar la situación donde la clave de JWT es nula
-                    return new
-                    {
-                        success = false,
-                        message = "La clave de JWT no está configurada correctamente",
-                        result = ""
-                    };
-                }
-                */
-                //var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key));
-                //var sigIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-                byte[] keyBytes = new byte[16];
-=======
-                
                 //Generamos el token , pasandole las entidades por claim
                 var claims = new[]
                 {
@@ -107,18 +74,11 @@ namespace APICruzber.Controllers
                     new Claim("password", password)
                 };
 
-                //Generamos la llave para cifrar el token
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key));
+                //Generamos la llave para cifrar el token             
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("estosoloesunaclavedepruebaadmincruzber08"));
+
                 //Ciframos el token
                 var sigIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-                //Establecemos la cantidad de bytes para la clave
-                byte[] keyBytes = new byte[16]; // 16 bytes = 128 bits
->>>>>>> Stashed changes
-                using (RandomNumberGenerator random = RandomNumberGenerator.Create())
-                {
-                    random.GetBytes(keyBytes);
-                }
 
                 //Creo el token con las características deseadas
                 var token = new JwtSecurityToken(
@@ -136,11 +96,7 @@ namespace APICruzber.Controllers
                     signingCredentials: sigIn
                 );
 
-<<<<<<< Updated upstream
-=======
-
                 //Devuelvo el token, si se cumple todo
->>>>>>> Stashed changes
                 return new
                 {
                     success = true,
@@ -149,12 +105,10 @@ namespace APICruzber.Controllers
                 };
             }
         }
-<<<<<<< Updated upstream
-    }
-}
-=======
-
-        [ HttpPost]
+        
+        
+                
+        [HttpPost]
         [Route("validar")]
         //Metodo para validar el token
         public IActionResult Validar()
@@ -184,14 +138,16 @@ namespace APICruzber.Controllers
         }
 
         //Logica para validar token
-        private bool ValidarToken(string token)
+        [HttpPost]
+        public bool ValidarToken(string token)
         {
             //Instancia de JwtSecurityTokenHandler
             var tokenHandler = new JwtSecurityTokenHandler();
             //Obetenemos la configuración del token
             var jwt = _configuration.GetSection("Jwt").Get<Jwt>();
             //Instanciamos  la clave secreta
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key));
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("estosoloesunaclavedepruebaadmincruzber08"));
 
             //Validamos los parametros del token
             var tokenValidationParameters = new TokenValidationParameters
@@ -214,8 +170,6 @@ namespace APICruzber.Controllers
                 return false;
             }
         }
-        
+
     }
 }
-
->>>>>>> Stashed changes

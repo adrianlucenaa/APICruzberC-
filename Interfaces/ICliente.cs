@@ -6,9 +6,10 @@ namespace APICruzber.Interfaces
     public interface ICliente
     {
         Task<IActionResult> MostrarClientes();
-        Task InsertarCliente(string CodigoCliente, string Nombre);
-        Task ActualizarCliente(string CodigoCliente, string Nombre);
-        Task EliminarCliente(string CodigoCliente);
+
+        Task<IActionResult> InsertarCliente(string CodigoCliente, string Nombre);
+        Task<IActionResult> ActualizarCliente(string CodigoCliente, string Nombre);
+        Task<IActionResult> EliminarCliente(string CodigoCliente);
         Task<IActionResult> MostrarClientesPorCodigo(string CodigoCliente);
 
     }

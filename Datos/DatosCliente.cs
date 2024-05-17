@@ -22,6 +22,8 @@ namespace APICruzber.Datos
         //Metodo para mostrar todos los clientes
         public async Task<IActionResult> MostrarClientes()
         {
+
+
             try
             {
                 // Obtener la lista de clientes utilizando el método apropiado
@@ -81,7 +83,7 @@ namespace APICruzber.Datos
         }
 
         //Metodo para insertar un cliente
-        public async Task InsertarCliente(string CodigoCliente, string Nombre)
+        public async Task<IActionResult> InsertarCliente(string CodigoCliente, string Nombre)
         {
             try
             {
@@ -101,6 +103,7 @@ namespace APICruzber.Datos
                         await cmd.ExecuteNonQueryAsync();
                     }
                 }
+                return new OkObjectResult(new { message = "Cliente insertado correctamente" });
             }
             catch (Exception ex)
             {
@@ -111,7 +114,7 @@ namespace APICruzber.Datos
         }
 
         //Metodo para actualizar un cliente
-        public async Task ActualizarCliente(string CodigoCliente, string Nombre)
+        public async Task<IActionResult> ActualizarCliente(string CodigoCliente, string Nombre)
         {
             try
             {
@@ -131,6 +134,7 @@ namespace APICruzber.Datos
                         await cmd.ExecuteNonQueryAsync();
                     }
                 }
+                return new OkObjectResult(new { message = "Cliente actualizado correctamente" });
             }
             catch (Exception ex)
             {
@@ -141,7 +145,7 @@ namespace APICruzber.Datos
         }
 
         //Metodo para eliminar un cliente
-        public async Task EliminarCliente(string CodigoCliente)
+        public async Task<IActionResult> EliminarCliente(string CodigoCliente)
         {
             try
             {
@@ -160,10 +164,12 @@ namespace APICruzber.Datos
                         await cmd.ExecuteNonQueryAsync();
                     }
                 }
+                return new OkObjectResult(new { message = "Cliente eliminado correctamente" });
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error al eliminar cliente: {ex.Message}");
+                //Console.WriteLine($"Error al eliminar cliente: {ex.Message}");
+                return new OkObjectResult(new { message = "Error al eliminar el cliente" });
                 throw; // Relanzar la excepción para que pueda ser manejada por el controlador
             }
         }
