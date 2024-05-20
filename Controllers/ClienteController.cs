@@ -13,6 +13,7 @@ namespace APICruzber.Controllers
     [ApiController]
     [Route("api/clientes")]
     [Authorize]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class ClienteController : ControllerBase, ICliente
     {
         public readonly ConnectionBD _cnxdb;
@@ -158,6 +159,7 @@ namespace APICruzber.Controllers
         }
 
         [HttpGet]
+        
         public async Task<IActionResult> MostrarClientes()
         {
             //Obtenemos el token

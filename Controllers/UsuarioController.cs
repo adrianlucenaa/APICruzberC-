@@ -17,6 +17,7 @@ namespace APICruzber.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ApiExplorerSettings(IgnoreApi = true)]
     //Controller del usuario
     public class UsuarioController : ControllerBase
     {
