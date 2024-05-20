@@ -1,45 +1,51 @@
 using APICruzber.Datos;
 using APICruzber.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
 using APICruzber.Controllers;
 using APICruzber.Modelo;
 using APICruzber.Connection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Logging;
+using System.Text;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configuración de logging
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
 
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "APICruzber", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "APICruzber", Version = "v1" });
 
-    c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        In = ParameterLocation.Header,
         Description = "Please enter token",
         Name = "Authorization",
-        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+        Type = SecuritySchemeType.Http,
         BearerFormat = "JWT",
         Scheme = "bearer"
     });
 
-    c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
-            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            new OpenApiSecurityScheme
             {
-                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                Reference = new OpenApiReference
                 {
-                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Type = ReferenceType.SecurityScheme,
                     Id = "Bearer"
                 }
             },
-            new string[] {}
+            new string[] { }
         }
     });
 });
@@ -47,7 +53,6 @@ builder.Services.AddSwaggerGen(c =>
 builder.Configuration.AddJsonFile("appsettings.json");
 var Key = builder.Configuration.GetSection("jwt").GetSection("Key").ToString();
 var keyBytes = Encoding.UTF8.GetBytes(Key);
-
 
 builder.Services.AddAuthentication(config =>
 {
@@ -66,10 +71,18 @@ builder.Services.AddAuthentication(config =>
     };
 });
 
-
 builder.Services.AddScoped<ConnectionBD>();
 builder.Services.AddScoped<DatosCliente>();
+builder.Services.AddScoped<DatosMail>();
 builder.Services.AddScoped<ICliente, DatosCliente>();
+
+// Inyección del servicio de logging en DatosMail
+builder.Services.AddScoped<IEmail, DatosMail>(provider =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("ConnectionStrings:ConexionBD");
+    var logger = provider.GetRequiredService<ILogger<DatosMail>>();
+    return new DatosMail(new ConnectionBD(), logger);
+});
 
 builder.Services.AddControllers();
 
